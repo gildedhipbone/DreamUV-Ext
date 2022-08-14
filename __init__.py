@@ -29,6 +29,7 @@ from . import DUV_UVInset
 from . import DUV_UVTrim
 from . import DUV_MatAssign
 from . import DUV_UVTexelDensity
+from . import DUV_MatAssign
 
 import importlib
 if 'bpy' in locals():
@@ -49,6 +50,7 @@ if 'bpy' in locals():
     importlib.reload(DUV_UVTrim)
     importlib.reload(DUV_MatAssign)
     importlib.reload(DUV_UVTexelDensity)
+    importlib.reload(DUV_MatAssign)
 
 class DUVUVToolsPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
@@ -208,7 +210,7 @@ class DREAMUV_PT_uv(bpy.types.Panel):
             box.enabled = False
         col = box.column(align=True)
         col.label(text="Material Tools:")
-        col.operator("view3d.dreamuv_matassign", text="Transfer Material", icon="OUTLINER_OB_LATTICE")
+        col.operator("view3d.dreamuv_matassign", text="Transfer Material", icon="MATERIAL")
     
         col.separator()
         box = layout.box()

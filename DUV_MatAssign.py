@@ -2,58 +2,58 @@ import bpy
 import bmesh
 
 class DREAMUV_OT_mat_assign(bpy.types.Operator):
-    """Assigns the material from the active face to the selected faces."""
+    """Clones the material from the active face to the target faces."""
     bl_idname = "view3d.dreamuv_matassign"
-    bl_label = "3D View Assign Material"
+    bl_label = "3D View Clone Material"
     bl_options = {"UNDO"}
 
     def execute(self, context):
-        # To-do: Make it work across objects.
-        ob = bpy.context.object
-        mesh = ob.data
-        bm = bmesh.from_edit_mesh(mesh)
-        bm.faces.ensure_lookup_table()
 
-        uv_layer = bm.loops.layers.uv.active
-
+        objs = bpy.context.selected_objects
+        active_obj = bpy.context.active_object
         facecounter = 0
+        selection = {}
 
-        selected_faces=[]
-        active_face = bm.faces.active
+        # I haven't found a way to differentiate between multiple active faces in multi-object editing.
+        # For now the "source" object has to be selected last.
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            bm.faces.ensure_lookup_table()
 
-        # Ensure that at least 1 face is selected.
-        for f in bm.faces:
-            if f.select:
-                facecounter += 1
+            selected_faces = []
+            for f in bm.faces:
+                if f.select:
+                    facecounter += 1
+                    if f is bm.faces.active and obj is active_obj:
+                        # Get source material.
+                        slot_len = len(obj.material_slots)
+                        if f.material_index < 0 or f.material_index >= slot_len:
+                            self.report({'INFO'}, "object has no materials, aborting")
+                            return {'FINISHED'}
+                        
+                        material = obj.material_slots[f.material_index].material
+                        if material is None:
+                            self.report({'INFO'}, "Active face has no material, aborting")
+                            return {'FINISHED'}
+
+                    else: selected_faces.append(f)
+
+            if len(selected_faces) > 0:
+                selection[obj] = selected_faces
+
         if facecounter < 2:
             self.report({'INFO'}, "only one face selected, aborting")
             return {'FINISHED'}
 
-        # Save the remaining selected faces.
-        for f in bm.faces:
-            if f.select:
-                if f is not bm.faces.active:
-                    selected_faces.append(f)
-                # Not sure what the point of this is.
-                else:
-                    f.select=False
+        # This creates a lot of duplicate materials. They can be cleaned up in post,
+        # but it would be nice if we merged here if possible. 
+        # Should also check if the material already exists.
+        for obj in selection:
+            print(obj)
+            obj.data.materials.append(material)
+            for f in selection[obj]:
+                f.material_index = len(obj.data.materials) - 1
 
-        # Try to get the material being applied to the face.
-        slot_len = len(ob.material_slots)
-        if active_face.material_index < 0 or active_face.material_index >= slot_len:
-            self.report({'INFO'}, "object has no materials, aborting")
-            return {'FINISHED'}
-            
-        material = ob.material_slots[active_face.material_index].material
-        if material is None:
-            self.report({'INFO'}, "face has no material, aborting")
-            return {'FINISHED'}
+            bmesh.update_edit_mesh(obj.data)
 
-        # Sets the selected faces' materials to that of the active face.
-        # This is stupid and creates a lot of clone materials.
-        for f in selected_faces:
-            ob.data.materials.append(material)
-            f.material_index = len(ob.data.materials) - 1
-
-        bmesh.update_edit_mesh(ob.data)
         return {'FINISHED'}
