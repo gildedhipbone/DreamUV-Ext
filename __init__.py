@@ -27,7 +27,6 @@ from . import DUV_UVProject
 from . import DUV_UVUnwrap
 from . import DUV_UVInset
 from . import DUV_UVTrim
-from . import DUV_MatAssign
 from . import DUV_UVTexelDensity
 from . import DUV_MatAssign
 
@@ -48,7 +47,6 @@ if 'bpy' in locals():
     importlib.reload(DUV_UVUnwrap)
     importlib.reload(DUV_UVInset)
     importlib.reload(DUV_UVTrim)
-    importlib.reload(DUV_MatAssign)
     importlib.reload(DUV_UVTexelDensity)
     importlib.reload(DUV_MatAssign)
 
