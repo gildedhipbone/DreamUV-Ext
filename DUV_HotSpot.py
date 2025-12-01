@@ -77,7 +77,15 @@ class DREAMUV_OT_hotspotter(bpy.types.Operator):
         bmesh.update_edit_mesh(obj.data)
         bpy.ops.mesh.select_all(action='DESELECT')
         bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
-        angle = bpy.context.object.data.auto_smooth_angle
+        
+        # Fixed: Handle auto_smooth_angle for Blender 4.0+
+        # Check if the old auto_smooth_angle attribute exists (Blender < 4.0)
+        if hasattr(bpy.context.object.data, 'auto_smooth_angle'):
+            angle = bpy.context.object.data.auto_smooth_angle
+        else:
+            # Default angle for Blender 4.0+ (30 degrees in radians)
+            angle = math.radians(30)
+        
         bpy.ops.mesh.edges_select_sharp(sharpness=angle)
         bpy.ops.mesh.mark_seam(clear=False)
         bpy.ops.mesh.select_all(action='DESELECT')
@@ -455,4 +463,4 @@ class DREAMUV_OT_hotspotter(bpy.types.Operator):
         
         return {'FINISHED'}
         
-        bpy.ops.object.editmode_toggle() 
+        bpy.ops.object.editmode_toggle()
