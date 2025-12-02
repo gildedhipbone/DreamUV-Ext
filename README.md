@@ -1,4 +1,7 @@
 # DreamUV
+## This Fork
+* Added an option to manually set the face angle for the hotspot tool
+* Added an option to set the texel density
 
 ## About
 DreamUV is a collection of tools that allow you to manipulate UVs in the 3D viewport. This toolset is designed to be used with reusable textures like tiling textures, trimsheets and texture atlases. Its intent is to allow you to texture your geometry without having to exit the 3D view, saving you time and improving flexibility.
@@ -69,3 +72,4 @@ To hotspot a mesh, simply select the faces you want to hotspot and click the hot
 ![screenshot](http://www.brameulaers.net/blender/addons/github_images/dreamuv_hotspot.jpg)
 
 If you have any feedback you can just message me via twitter: @leukbaars
+
