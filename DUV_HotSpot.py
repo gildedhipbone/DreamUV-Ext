@@ -84,7 +84,7 @@ class DREAMUV_OT_hotspotter(bpy.types.Operator):
             angle = bpy.context.object.data.auto_smooth_angle
         else:
             # Default angle for Blender 4.0+ (30 degrees in radians)
-            angle = math.radians(30)
+            angle = math.radians(bpy.context.scene.duv_hotspot_angle)
         
         bpy.ops.mesh.edges_select_sharp(sharpness=angle)
         bpy.ops.mesh.mark_seam(clear=False)
